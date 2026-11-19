@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test
+        run: cargo test --locked
+
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Copy-Item target/release/clock-in.exe clock-in.exe
+          $hash = (Get-FileHash clock-in.exe -Algorithm SHA256).Hash.ToLower()
+          Set-Content clock-in.exe.sha256 "$hash  clock-in.exe" -NoNewline
+          gh release create $env:GITHUB_REF_NAME clock-in.exe clock-in.exe.sha256 `
+            --title $env:GITHUB_REF_NAME --generate-notes

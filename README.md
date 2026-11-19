@@ -14,13 +14,13 @@ The Windows Teams client sets your status from how recently you touched the keyb
 
 ## Install
 
-Requires Windows 10 or 11, the new Teams client, and [Rust](https://rustup.rs).
+Requires Windows 10 or 11 and the new Teams client. In PowerShell:
 
-```sh
-cargo install --path .
+```powershell
+irm https://raw.githubusercontent.com/churnware/clock-in/main/install.ps1 | iex
 ```
 
-Or build with `cargo build --release` and put `target/release/clock-in.exe` somewhere on your `PATH`.
+This downloads the latest release to `%LOCALAPPDATA%\clock-in\bin`, checks its SHA-256, and adds that folder to your PATH. Run it again to update. To build from source instead, use `cargo install --git https://github.com/churnware/clock-in`.
 
 ## Usage
 

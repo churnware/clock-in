@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 description = "Set when Microsoft Teams shows you online, at lunch, and offline."
 license = "MIT"
+repository = "https://github.com/churnware/clock-in"
 authors = ["Fizzy"]
 
 [dependencies]
