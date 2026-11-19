@@ -4,6 +4,8 @@
 mod anim;
 mod app;
 mod canvas;
+#[cfg(test)]
+mod demo;
 mod theme;
 mod views;
 

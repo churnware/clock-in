@@ -1,15 +1,10 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/hero-dark.webp">
-  <img src="docs/hero-light.webp" alt="The clock-in lucky cat waving its paw" width="206">
-</picture>
-
 # clock-in
 
 Choose when Microsoft Teams shows you online, at lunch, and offline.
 
-<img src="docs/screenshot.png" alt="The clock-in dashboard: a lucky cat clock counting down to lunch, a shelf of day books, and the schedule editor" width="760">
+<img src="docs/dashboard.webp" alt="The clock-in dashboard: a lucky cat clock waving and counting down to lunch, a shelf of day books, and the schedule editor" width="760">
 
 </div>
 
@@ -68,3 +63,10 @@ Settings live in `%APPDATA%\clock-in\config.toml`, and the log is in `%LOCALAPPD
 | ----------------- | ------- | ------------------------------------------------------ |
 | `relaunch_teams`  | `true`  | Open Teams when the work day starts.                   |
 | `enforce_offline` | `true`  | Close Teams again if it opens after hours or on days off. |
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/cat-dark.webp">
+    <img src="docs/cat-light.webp" alt="The clock-in lucky cat waving its paw" width="160">
+  </picture>
+</p>

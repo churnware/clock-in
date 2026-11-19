@@ -317,38 +317,6 @@ mod tests {
         assert_eq!(a.at(14), None);
     }
 
-    /// Writes the working cat's frames as ANSI for utils/render_hero.py.
-    /// Set CLOCK_IN_FRAMES to the output path, and optionally
-    /// CLOCK_IN_FRAME_COUNT and CLOCK_IN_FACE.
-    #[test]
-    #[ignore]
-    fn dump_hero_frames() {
-        use ratatui::style::{Color, Modifier};
-        use std::fmt::Write;
-
-        let path = std::env::var("CLOCK_IN_FRAMES").expect("set CLOCK_IN_FRAMES");
-        let count = std::env::var("CLOCK_IN_FRAME_COUNT").map_or(8, |n| n.parse().unwrap());
-        let face = std::env::var("CLOCK_IN_FACE").unwrap_or_else(|_| "09:00".into());
-        let mut out = String::new();
-        for f in 0..count {
-            for line in cat(Mood::Working, f, &face).into_lines() {
-                for span in line.spans {
-                    if let Some(Color::Rgb(r, g, b)) = span.style.fg {
-                        write!(out, "\x1b[38;2;{r};{g};{b}m").unwrap();
-                    }
-                    if span.style.add_modifier.contains(Modifier::BOLD) {
-                        out.push_str("\x1b[1m");
-                    }
-                    out.push_str(&span.content);
-                    out.push_str("\x1b[0m");
-                }
-                out.push('\n');
-            }
-            out.push('\x0c'); // frame separator
-        }
-        std::fs::write(path, out).unwrap();
-    }
-
     #[test]
     fn draws_every_mood_without_panicking() {
         for mood in [Mood::Working, Mood::Lunch, Mood::Stopped] {
