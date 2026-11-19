@@ -1,6 +1,6 @@
 """Render the dashboard in a terminal window to docs/dashboard.webp.
 
-The animated WebP plays the cat's wave a few times and then holds the last
+The animated WebP plays the cat's wave once and then holds the last
 frame. Frames come from views::draw on the default schedule with the clock
 pinned, so they track changes to the layout and theme.
 
@@ -38,7 +38,7 @@ def main():
     p.add_argument("--at", default="2026-11-19 10:47", help="the dashboard's date and time")
     p.add_argument("--cols", type=int, default=96)
     p.add_argument("--rows", type=int, default=27)
-    p.add_argument("--loops", type=int, default=3)
+    p.add_argument("--loops", type=int, default=1)
     p.add_argument("--size", type=int, default=16, help="font size in px")
     a = p.parse_args()
     shots = frames.load("dump_dashboard_frames", frames.FULL_CYCLE,
