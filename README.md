@@ -43,7 +43,3 @@ Settings live in `%APPDATA%\clock-in\config.toml`, and the log is in `%LOCALAPPD
 | ----------------- | ------- | ------------------------------------------------------ |
 | `relaunch_teams`  | `true`  | Open Teams when the work day starts.                   |
 | `enforce_offline` | `true`  | Close Teams again if it opens after hours or on days off. |
-
-## License
-
-[MIT](LICENSE)
