@@ -1,0 +1,88 @@
+"""Render the waving lucky cat to docs/hero-{dark,light}.webp.
+
+Each animated WebP plays the paw's beckon a few times and then holds the
+last frame. Frames come from anim::cat via an ignored test, so they track
+changes to the sprite and its colours.
+
+    python utils/render_hero.py [--face HH:MM] [--loops N]
+"""
+import argparse
+import os
+import subprocess
+import tempfile
+
+from _common import DOCS, REPO
+from ansi import Terminal
+
+# One full swing of the eyes and tail; the paw beckons twice in it.
+CYCLE = 8
+# Start two frames in so each loop ends with the paw raised, which is also
+# the frame left showing once the animation stops.
+START = 2
+# src/tui/anim.rs runs at 7 fps.
+FRAME_MS = 1000 // 7
+
+# From src/tui/theme.rs.
+WHITE = (0xFF, 0xFF, 0xFF)
+BRAND = (0x4B, 0x53, 0xBC)
+DARK = (0x46, 0x47, 0x75)
+
+
+def mix(a, b, t):
+    return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+
+
+def dark(rgb):
+    return rgb
+
+
+def light(rgb):
+    """White eyes and digits become brand ink; the pale sky and lavender
+    tones deepen towards Teams' dark purple so they hold up on white."""
+    return BRAND if rgb == WHITE else mix(rgb, DARK, 0.3)
+
+
+def frames(face):
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, "frames.ansi")
+        env = dict(os.environ, CLOCK_IN_FRAMES=path, CLOCK_IN_FACE=face,
+                   CLOCK_IN_FRAME_COUNT=str(START + CYCLE), COLORTERM="truecolor")
+        subprocess.run(["cargo", "test", "-q", "--", "--ignored", "--exact",
+                        "tui::anim::tests::dump_hero_frames"],
+                       cwd=REPO, env=env, check=True, stdout=subprocess.DEVNULL)
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    chunks = [c.rstrip("\n").split("\n") for c in text.split("\f") if c.strip()]
+    return chunks[START:]
+
+
+def crop(images, margin=8):
+    """Crop every frame to the area any frame draws on, so the canvas's blank
+    columns don't push the cat off-centre."""
+    boxes = [im.getchannel("A").getbbox() for im in images]
+    box = (min(b[0] for b in boxes) - margin, min(b[1] for b in boxes) - margin,
+           max(b[2] for b in boxes) + margin, max(b[3] for b in boxes) + margin)
+    return [im.crop(box) for im in images]
+
+
+def render(term, palette, path, shots, loops):
+    images = crop([term.render(lines, WHITE, palette) for lines in shots])
+    images[0].save(path, save_all=True, append_images=images[1:], duration=FRAME_MS,
+                   loop=loops, lossless=True, method=4, background=(0, 0, 0, 0))
+    print(f"{path} {images[0].size[0]}x{images[0].size[1]}, {os.path.getsize(path) // 1024} KB")
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--face", default="09:00", help="time on the cat's clock")
+    p.add_argument("--loops", type=int, default=3)
+    p.add_argument("--size", type=int, default=32, help="font size in px")
+    a = p.parse_args()
+    shots = frames(a.face)
+    term = Terminal(a.size)
+    for name, palette in (("dark", dark), ("light", light)):
+        render(term, palette, str(DOCS / f"hero-{name}.webp"), shots, a.loops)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/hero-dark.webp">
+  <img src="docs/hero-light.webp" alt="The clock-in lucky cat waving its paw" width="206">
+</picture>
+
 # clock-in
 
 Choose when Microsoft Teams shows you online, at lunch, and offline.
